@@ -1,5 +1,11 @@
-const VAPID_PUBLIC_KEY = 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk';
-const BASE_URL = 'https://story-api.dicoding.dev/v1';
+// Use environment-specific VAPID key
+const VAPID_PUBLIC_KEY = process.env.NODE_ENV === 'production' 
+  ? 'YOUR_PRODUCTION_VAPID_PUBLIC_KEY'  // Replace with your production VAPID key
+  : 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk';
+
+const BASE_URL = process.env.NODE_ENV === 'production'
+  ? 'YOUR_PRODUCTION_API_URL'  // Replace with your production API URL
+  : 'https://story-api.dicoding.dev/v1';
 
 class PushNotification {
   static async registerServiceWorker() {
@@ -12,10 +18,10 @@ class PushNotification {
         return registration;
       } catch (error) {
         console.error('Service Worker registration failed:', error);
-        throw error;
+        throw new Error(`Service Worker registration failed: ${error.message}`);
       }
     }
-    throw new Error('Service Worker not supported');
+    throw new Error('Service Worker not supported in this browser');
   }
 
   static async requestNotificationPermission() {
@@ -27,12 +33,17 @@ class PushNotification {
       return true;
     } catch (error) {
       console.error('Error requesting notification permission:', error);
-      throw error;
+      throw new Error(`Notification permission error: ${error.message}`);
     }
   }
 
   static async subscribe() {
     try {
+      // Check if the site is served over HTTPS
+      if (window.location.protocol !== 'https:' && process.env.NODE_ENV === 'production') {
+        throw new Error('Push notifications require HTTPS in production');
+      }
+
       // First request notification permission
       await this.requestNotificationPermission();
 
@@ -42,6 +53,7 @@ class PushNotification {
       // Check if already subscribed
       let subscription = await registration.pushManager.getSubscription();
       if (subscription) {
+        console.log('Already subscribed to push notifications');
         return subscription;
       }
 
@@ -50,6 +62,8 @@ class PushNotification {
         userVisibleOnly: true,
         applicationServerKey: this.urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
       });
+
+      console.log('Successfully subscribed to push notifications');
 
       // Send subscription to server
       const response = await fetch(`${BASE_URL}/notifications/subscribe`, {
@@ -68,7 +82,8 @@ class PushNotification {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to subscribe to notifications');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to subscribe to notifications');
       }
 
       const responseJson = await response.json();
@@ -76,6 +91,7 @@ class PushNotification {
         throw new Error(responseJson.message);
       }
 
+      console.log('Successfully registered subscription with server');
       return responseJson;
     } catch (error) {
       console.error('Error subscribing to push notifications:', error);
