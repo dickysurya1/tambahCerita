@@ -26,14 +26,32 @@ class PushNotification {
 
   static async requestNotificationPermission() {
     try {
+      // Check if the browser supports notifications
+      if (!('Notification' in window)) {
+        throw new Error('This browser does not support notifications');
+      }
+
+      // Check current permission status
+      const currentPermission = Notification.permission;
+      
+      if (currentPermission === 'granted') {
+        return true;
+      }
+
+      if (currentPermission === 'denied') {
+        throw new Error('Notification permission was previously denied. Please enable it in your browser settings.');
+      }
+
+      // Request permission
       const permission = await Notification.requestPermission();
       if (permission !== 'granted') {
         throw new Error('Notification permission denied');
       }
+
       return true;
     } catch (error) {
       console.error('Error requesting notification permission:', error);
-      throw new Error(`Notification permission error: ${error.message}`);
+      throw error;
     }
   }
 

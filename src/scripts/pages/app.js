@@ -65,17 +65,30 @@ class App {
             notificationButton.textContent = 'Enable Notifications';
             this._showAlert('success', 'Notifications disabled successfully');
           } else {
-            await PushNotification.subscribe();
-            notificationButton.classList.add('subscribed');
-            notificationButton.textContent = 'Disable Notifications';
-            this._showAlert('success', 'Notifications enabled successfully');
+            // Show loading state
+            notificationButton.disabled = true;
+            notificationButton.textContent = 'Enabling...';
+
+            try {
+              await PushNotification.subscribe();
+              notificationButton.classList.add('subscribed');
+              notificationButton.textContent = 'Disable Notifications';
+              this._showAlert('success', 'Notifications enabled successfully');
+            } catch (error) {
+              if (error.message.includes('permission denied')) {
+                this._showAlert('error', 'Please allow notifications in your browser settings');
+              } else {
+                this._showAlert('error', error.message || 'Failed to enable notifications');
+              }
+              notificationButton.textContent = 'Enable Notifications';
+            } finally {
+              notificationButton.disabled = false;
+            }
           }
         } catch (error) {
-          if (error.message === 'Notification permission denied') {
-            this._showAlert('error', 'Please allow notifications in your browser settings');
-          } else {
-            this._showAlert('error', error.message || 'Failed to manage notifications');
-          }
+          this._showAlert('error', error.message || 'Failed to manage notifications');
+          notificationButton.textContent = 'Enable Notifications';
+          notificationButton.disabled = false;
         }
       });
     }
