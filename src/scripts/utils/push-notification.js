@@ -1,18 +1,15 @@
 // Use environment-specific VAPID key
-const VAPID_PUBLIC_KEY = process.env.NODE_ENV === 'production' 
-  ? 'YOUR_PRODUCTION_VAPID_PUBLIC_KEY'  // Replace with your production VAPID key
-  : 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk';
+const VAPID_PUBLIC_KEY = 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk';
 
-const BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'YOUR_PRODUCTION_API_URL'  // Replace with your production API URL
-  : 'https://story-api.dicoding.dev/v1';
+const BASE_URL = 'https://story-api.dicoding.dev/v1';
 
 class PushNotification {
   static async registerServiceWorker() {
     if ('serviceWorker' in navigator) {
       try {
         const registration = await navigator.serviceWorker.register('/service-worker.js', {
-          scope: '/'
+          scope: '/',
+          updateViaCache: 'none'
         });
         console.log('Service Worker registered with scope:', registration.scope);
         return registration;
