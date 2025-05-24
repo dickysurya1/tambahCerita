@@ -2,7 +2,7 @@
   "name": "Restaurant App",
   "short_name": "RestoApp",
   "description": "Restaurant catalog application",
-  "start_url": "./",
+  "start_url": "/tambahCerita/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000"
