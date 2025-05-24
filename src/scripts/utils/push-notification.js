@@ -9,7 +9,8 @@ class PushNotification {
       try {
         const registration = await navigator.serviceWorker.register('/service-worker.js', {
           scope: '/',
-          updateViaCache: 'none'
+          updateViaCache: 'none',
+          type: 'module'
         });
         console.log('Service Worker registered with scope:', registration.scope);
         return registration;

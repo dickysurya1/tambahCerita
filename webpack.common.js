@@ -45,6 +45,10 @@ module.exports = {
             ignore: ['**/.*'],
           },
         },
+        {
+          from: path.resolve(__dirname, 'public/service-worker.js'),
+          to: path.resolve(__dirname, 'dist/service-worker.js'),
+        },
       ],
     }),
     new Dotenv(),
