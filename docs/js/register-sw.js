@@ -1,0 +1,1 @@
+"serviceWorker"in navigator&&window.addEventListener("load",(()=>{const e="localhost"===window.location.hostname?"./sw.js":"/Proyek-Akhir-tambahCerita/sw.js";navigator.serviceWorker.register(e).then((e=>{console.log("ServiceWorker registration successful")})).catch((e=>{console.log("ServiceWorker registration failed: ",e)}))}));
