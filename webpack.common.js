@@ -46,8 +46,16 @@ module.exports = {
           },
         },
         {
-          from: path.resolve(__dirname, 'public/service-worker.js'),
-          to: path.resolve(__dirname, 'dist/service-worker.js'),
+          from: path.resolve(__dirname, 'public/manifest.json'),
+          to: path.resolve(__dirname, 'dist/manifest.json'),
+        },
+        {
+          from: path.resolve(__dirname, 'public/sw.js'),
+          to: path.resolve(__dirname, 'dist/sw.js'),
+        },
+        {
+          from: path.resolve(__dirname, 'public/js/register-sw.js'),
+          to: path.resolve(__dirname, 'dist/js/register-sw.js'),
         },
       ],
     }),
