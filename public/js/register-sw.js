@@ -1,6 +1,7 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    const swPath = window.location.hostname === 'localhost' ? './sw.js' : '/Proyek-Akhir-tambahCerita/sw.js';
+    navigator.serviceWorker.register(swPath)
       .then((registration) => {
         console.log('ServiceWorker registration successful');
       })
